@@ -7,7 +7,7 @@ Some metrics to compare time series.
 
 import numpy as np
 from ..timeseries import TimeSeries
-from darts.utils import _parallel_apply, _build_tqdm_iterator
+from ..utils import _parallel_apply, _build_tqdm_iterator
 from ..utils.statistics import check_seasonality
 from ..logging import raise_if_not, get_logger, raise_log
 from warnings import warn

@@ -3,9 +3,9 @@ Scaler
 ------
 """
 from typing import Sequence, Iterator, Any, Tuple
-from darts.dataprocessing.transformers import InvertibleDataTransformer, FittableDataTransformer
-from darts.timeseries import TimeSeries
-from darts.logging import get_logger, raise_log
+from my_code.github_repos.darts.darts.darts.dataprocessing.transformers import InvertibleDataTransformer, FittableDataTransformer
+from my_code.github_repos.darts.darts.darts.timeseries import TimeSeries
+from my_code.github_repos.darts.darts.darts.logging import get_logger, raise_log
 from sklearn.preprocessing import MinMaxScaler
 from copy import deepcopy
 

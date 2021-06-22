@@ -147,6 +147,7 @@ class ForecastingModel(ABC):
                              series: TimeSeries,
                              covariates: Optional[TimeSeries] = None,
                              start: Union[pd.Timestamp, float, int] = 0.5,
+                             train_cutoff: Optional[int] = None,
                              forecast_horizon: int = 1,
                              stride: int = 1,
                              retrain: bool = True,
@@ -208,6 +209,8 @@ class ForecastingModel(ABC):
         TimeSeries or List[TimeSeries]
             By default, a single TimeSeries instance created from the last point of each individual forecast.
             If `last_points_only` is set to False, a list of the historical forecasts.
+            :param start:
+            :param train_cutoff:
         """
         if covariates:
             raise_if_not(series.has_same_time_as(covariates),
@@ -244,10 +247,16 @@ class ForecastingModel(ABC):
         predict_signature = signature(self.predict)
 
         # iterate and forecast
+
         for pred_time in iterator:
             train = series.drop_after(pred_time)  # build the training series
+            if train_cutoff is not None:
+                train = train.drop_before(train.get_timestamp_at_point(len(train) - train_cutoff - 1))
             if covariates:
                 train_cov = covariates.drop_after(pred_time)
+                if train_cutoff is not None:
+                    train_cov = train_cov.drop_before(
+                        train_cov.get_timestamp_at_point(len(train_cov) - train_cutoff - 1))
 
             if retrain:
                 if covariates and "covariates" in fit_signature.parameters:
@@ -256,6 +265,9 @@ class ForecastingModel(ABC):
                     self.fit(series=train, exog=train_cov)
                 else:
                     self.fit(series=train)
+
+            if not retrain and series.get_timestamp_at_point(start) == pred_time:
+                self.fit(series=train)
 
             if covariates:
                 if 'covariates' in predict_signature.parameters:
@@ -294,6 +306,7 @@ class ForecastingModel(ABC):
                  series: TimeSeries,
                  covariates: Optional[TimeSeries] = None,
                  start: Union[pd.Timestamp, float, int] = 0.5,
+                 train_cutoff: Optional[int] = None,
                  forecast_horizon: int = 1,
                  stride: int = 1,
                  retrain: bool = True,
@@ -366,6 +379,7 @@ class ForecastingModel(ABC):
         forecasts = self.historical_forecasts(series,
                                               covariates,
                                               start,
+                                              train_cutoff,
                                               forecast_horizon,
                                               stride,
                                               retrain,
@@ -389,6 +403,7 @@ class ForecastingModel(ABC):
                    covariates: Optional[TimeSeries] = None,
                    forecast_horizon: Optional[int] = None,
                    start: Union[pd.Timestamp, float, int] = 0.5,
+                   train_cutoff: Optional[int] = None,
                    last_points_only: bool = False,
                    val_series: Optional[TimeSeries] = None,
                    use_fitted_values: bool = False,
@@ -509,6 +524,7 @@ class ForecastingModel(ABC):
                 error = model.backtest(series,
                                        covariates,
                                        start,
+                                       train_cutoff,
                                        forecast_horizon,
                                        metric=metric,
                                        reduction=reduction,
@@ -534,6 +550,7 @@ class ForecastingModel(ABC):
     def residuals(self,
                   series: TimeSeries,
                   forecast_horizon: int = 1,
+                  train_cutoff: Optional[int] = None,
                   verbose: bool = False) -> TimeSeries:
         """ A function for computing the residuals produced by the current model on a univariate time series.
 
@@ -569,6 +586,7 @@ class ForecastingModel(ABC):
         # compute fitted values
         p = self.historical_forecasts(series=series,
                                       start=first_index,
+                                      train_cutoff=train_cutoff,
                                       forecast_horizon=forecast_horizon,
                                       stride=1,
                                       retrain=True,

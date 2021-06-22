@@ -5,9 +5,9 @@ Pipeline
 from copy import deepcopy
 from typing import Sequence, Union, Iterator
 
-from darts.logging import raise_if_not, get_logger
-from darts import TimeSeries
-from darts.dataprocessing.transformers import BaseDataTransformer, InvertibleDataTransformer, FittableDataTransformer
+from ..logging import raise_if_not, get_logger
+from ..timeseries import TimeSeries
+from ..dataprocessing.transformers import BaseDataTransformer, InvertibleDataTransformer, FittableDataTransformer
 
 logger = get_logger(__name__)
 

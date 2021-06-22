@@ -199,7 +199,6 @@ class TorchForecastingModel(GlobalForecastingModel, ABC):
         # the tensors have shape (chunk_length, nr_dimensions)
         model = self._create_model(self.input_dim, self.output_dim)
         self.model = model.to(self.device)
-
         # A utility function to create optimizer and lr scheduler from desired classes
         def _create_from_cls_and_kwargs(cls, kws):
             try:
@@ -413,7 +412,6 @@ class TorchForecastingModel(GlobalForecastingModel, ABC):
         if isinstance(series, TimeSeries):
             called_with_single_series = True
             series = [series]
-
         covariates = [covariates] if isinstance(covariates, TimeSeries) else covariates
 
         dataset = SimpleInferenceDataset(series, covariates)

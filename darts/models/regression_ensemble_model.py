@@ -4,10 +4,10 @@ Regression ensemble model
 """
 from typing import Optional, List
 
-from darts.timeseries import TimeSeries
-from darts.logging import get_logger, raise_if
-from darts.models.forecasting_model import ForecastingModel
-from darts.models import (
+from ..timeseries import TimeSeries
+from ..logging import get_logger, raise_if
+from ..models.forecasting_model import ForecastingModel
+from ..models import (
     EnsembleModel, LinearRegressionModel, RegressionModel,
     RandomForest
 )

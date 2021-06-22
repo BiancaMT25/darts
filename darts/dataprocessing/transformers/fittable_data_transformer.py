@@ -2,11 +2,11 @@
 Fittable Data Transformer
 -------------------------
 """
-from darts import TimeSeries
+from my_code.github_repos.darts.darts.darts.timeseries import TimeSeries
 from typing import Union, Sequence, Iterator, Tuple, List
-from darts.logging import get_logger
-from darts.dataprocessing.transformers import BaseDataTransformer
-from darts.utils import _parallel_apply, _build_tqdm_iterator
+from my_code.github_repos.darts.darts.darts.logging import get_logger
+from my_code.github_repos.darts.darts.darts.dataprocessing.transformers import BaseDataTransformer
+from my_code.github_repos.darts.darts.darts.utils import _parallel_apply, _build_tqdm_iterator
 from abc import abstractmethod
 
 
