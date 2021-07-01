@@ -251,12 +251,13 @@ class ForecastingModel(ABC):
         for pred_time in iterator:
             train = series.drop_after(pred_time)  # build the training series
             if train_cutoff is not None:
-                train = train.drop_before(train.get_timestamp_at_point(len(train) - train_cutoff - 1))
+                cutoff = train.get_timestamp_at_point(len(train) - train_cutoff)
+                train = train[cutoff].append(train.drop_before(cutoff))
             if covariates:
                 train_cov = covariates.drop_after(pred_time)
                 if train_cutoff is not None:
-                    train_cov = train_cov.drop_before(
-                        train_cov.get_timestamp_at_point(len(train_cov) - train_cutoff - 1))
+                    cutoff = train_cov.get_timestamp_at_point(len(train_cov) - train_cutoff)
+                    train_cov = train_cov[cutoff].append(train_cov.drop_before(cutoff))
 
             if retrain:
                 if covariates and "covariates" in fit_signature.parameters:

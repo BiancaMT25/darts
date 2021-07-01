@@ -581,7 +581,7 @@ class TorchForecastingModel(GlobalForecastingModel, ABC):
                 tb_writer.add_scalar("training/loss_total", total_loss / (batch_idx + 1), epoch)
                 tb_writer.add_scalar("training/learning_rate", self._get_learning_rate(), epoch)
 
-            self._save_model(False, _get_checkpoint_folder(self.work_dir, self.model_name), epoch)
+            #self._save_model(False, _get_checkpoint_folder(self.work_dir, self.model_name), epoch)
 
             if epoch % self.nr_epochs_val_period == 0:
                 training_loss = total_loss / len(train_loader)
@@ -592,7 +592,7 @@ class TorchForecastingModel(GlobalForecastingModel, ABC):
 
                     if validation_loss < best_loss:
                         best_loss = validation_loss
-                        self._save_model(True, _get_checkpoint_folder(self.work_dir, self.model_name), epoch)
+                        #self._save_model(True, _get_checkpoint_folder(self.work_dir, self.model_name), epoch)
 
                     if verbose:
                         print("Training loss: {:.4f}, validation loss: {:.4f}, best val loss: {:.4f}".
@@ -634,6 +634,7 @@ class TorchForecastingModel(GlobalForecastingModel, ABC):
 
         with open(filename, 'wb') as f:
             torch.save(self, f)
+            f.close()
 
         if len(checklist) >= 5:
             # remove older files
@@ -655,12 +656,14 @@ class TorchForecastingModel(GlobalForecastingModel, ABC):
 
         with open(filename, 'wb') as f:
             torch.save(self, f)
+            f.close()
 
     def _load_untrained_model(self, folder):
         filename = os.path.join(folder, 'model.pth.tar')
 
         with open(filename, 'rb') as f:
             model = torch.load(f)
+            f.close()
         return model
 
     def _prepare_tensorboard_writer(self):
@@ -723,6 +726,7 @@ class TorchForecastingModel(GlobalForecastingModel, ABC):
         print('loading {}'.format(filename))
         with open(full_fname, 'rb') as f:
             model = torch.load(f)
+            f.close()
         return model
 
     def _get_best_torch_device(self):
